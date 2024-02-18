@@ -1,0 +1,47 @@
+.landing-page {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f8f9fa; /* Pale gray background */
+  }
+  
+  .text-box {
+    background-color: #e0f7fa; /* Light pale blue background */
+    padding: 40px;
+    text-align: center;
+    border-radius: 8px;
+  }
+  
+  .icon {
+    font-size: 48px; /* Adjust icon size as needed */
+    margin-bottom: 20px;
+  }
+  
+  .buttons {
+    margin-top: 20px;
+  }
+  
+  .button {
+    background-color: black;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin: 0 10px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .button:hover {
+    opacity: 0.8;
+  }
+  
+  .footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    padding: 20px;
+    background-color: #e0e0e0; /* Grey footer */
+  }
