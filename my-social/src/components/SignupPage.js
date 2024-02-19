@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // Import useHistory
 import './SignupPage.css'; // Ensure this CSS file has the necessary styles
+import { useUser } from '../contexts/UserContext';
+
 
 const SignupPage = () => {
   const [user, setUser] = useState({
@@ -20,10 +22,26 @@ const SignupPage = () => {
     setUser({ ...user, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const { loginUser } = useUser();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(user); // Placeholder for API call
-    localStorage.setItem('users', JSON.stringify([...JSON.parse(localStorage.getItem('users') || '[]'), user]));
+    // Assuming you want to use the same fields in your user context
+    const newUser = {
+      email: user.email,
+      password:user.password,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      bio: user.bio
+    };
+    console.log(newUser); // Placeholder for API call
+
+    // Store the user data in localStorage
+    localStorage.setItem('users', JSON.stringify([...JSON.parse(localStorage.getItem('users') || '[]'), newUser]));
+
+    // Update the user context
+    await loginUser(newUser.email, newUser.password);
+
     alert('Signup successful! (User data stored in localStorage)');
     navigate('/'); // Redirect to landing page (adjust the path as needed)
   };

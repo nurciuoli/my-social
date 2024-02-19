@@ -6,19 +6,22 @@
   }
   
   .profile-section {
-    flex: 1;
+    flex: 1; /* Increase the flex value to allocate more space to the profile section */
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 20px;
+    padding: 40px; /* Increase padding for larger overall size */
     border-bottom: 1px solid #e0e0e0; /* Light grey border for separation */
+    min-height: 400px; /* Set a minimum height */
   }
   
   .profile-content {
     text-align: center;
-    padding: 20px;
+    padding: 100px; /* Increase padding for a larger content area */
     background-color: #e0f7fa; /* Light pale blue background, consistent with LandingPage */
     border-radius: 8px;
+    width: 80%; /* Set a width percentage for the content area */
+    max-width: 1200px; /* Optional: Set a max-width to prevent it from becoming too wide on large screens */
   }
   
   .posts-section {
