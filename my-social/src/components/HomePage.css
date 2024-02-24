@@ -20,75 +20,54 @@
     padding: 100px; /* Increase padding for a larger content area */
     background-color: #e0f7fa; /* Light pale blue background, consistent with LandingPage */
     border-radius: 8px;
-    width: 80%; /* Set a width percentage for the content area */
     max-width: 1200px; /* Optional: Set a max-width to prevent it from becoming too wide on large screens */
+  }
+  .button-container {
+    margin-top: 20px; /* Add margin to separate the button from the profile section */
   }
   
   .posts-section {
     flex: 2;
-    overflow: hidden;
     position: relative;
-    height: 600px; /* Increased height to accommodate Y-offsets */
+    height: 200px; /* Increased height to accommodate Y-offsets */
     padding-top: 50px; /* Add padding to the top to prevent cutting off */
   }
-  .postsContainer {
-    position: relative;
-    height: 100%; /* Set to the height of the posts-section */
-    /* Remove display, justify-content, align-items, and other flex properties */
+  /* Define common styles for all vehicles */
+  .vehicle {
+    position: absolute;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    animation: drive linear 1;
+    width: 600px; /* Set a fixed width */
+    height: 300px; /* Set a fixed height */
   }
   
-  .post {
-    position: absolute; 
-    display: inline-flex; /* Use inline-flex to center text inside the bubble */
-    justify-content: center;
-    align-items: center;
-    margin: 10px 20px; /* Increase horizontal margin to spread out the bubbles */
-    padding: 50px;
-    background-color: #ffffff;
-    border: 1px solid #e0e0e0;
-    border-radius: 50%; /* Make it round */
-    font-weight: bold;
-    /* Use the interactions to scale the bubble size */
-    transform: scale(calc(1 + var(--interactions) / 10));
-    /* Transition for smooth scaling */
-    transition: transform 0.2s;
+
+  .sedan {
+    background-image: url('pics/sedan.png');
   }
   
-  /* Adjust the keyframes to keep the animation smooth and continuous */
-  @keyframes flowHorizontally {
+  .suv {
+    background-image: url('pics/suv.png');
+  }
+  
+  .bus {
+    background-image: url('pics/bus.png');
+  }
+  /* Adjust the keyframes to simulate driving */
+  /* Define lane heights */
+  .lane-1 { top: 0; }
+  .lane-2 { top: 25%; }
+  .lane-3 { top: 50%; }
+  .lane-4 { top: 75%; }
+
+  /* Adjust the keyframes to simulate driving */
+  @keyframes drive {
     0% {
-      transform: translateX(-100%); /* Start off-screen to the left */
+      transform: translateX(-100%);
     }
     100% {
-      transform: translateX(100vw); /* End off-screen to the right */
+      transform: translateX(calc(100vw + 100%));
     }
-  }
-  .post {
-    position: absolute;
-    animation: flowHorizontally linear forwards;
-    left: -25%;
-    animation-duration: 30s;
-  }
-  /* Reusing button styles from LandingPage.css */
-  .button {
-    background-color: black;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    margin: 0 10px;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .button:hover {
-    opacity: 0.8;
-  }
-  
-  .footer {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    text-align: center;
-    padding: 20px;
-    background-color: #e0e0e0; /* Grey footer, consistent with LandingPage */
   }

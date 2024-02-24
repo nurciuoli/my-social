@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useUser } from '../contexts/UserContext'; // Import useUser from your context
 import './HomePage.css'
 // Dummy posts data with random titles
@@ -14,7 +14,7 @@ const dummyPosts = [
   { id: 9, title: "The Art of Meditation", interactions: 18 },
   { id: 10, title: "Cooking with Spices", interactions: 7 },
   { id: 11, title: "The World of Dreams", interactions: 14 },
-  { id: 12, title: "Discovering New Technologies", interactions: 9 },
+  { id: 12, title: "Discovering New Technologies", interactions: 250 },
   { id: 13, title: "The Science of Happiness", interactions: 16 },
   { id: 14, title: "The Power of Mindfulness", interactions: 4 },
   { id: 15, title: "Unraveling Historical Myths", interactions: 11 },
@@ -32,96 +32,90 @@ const dummyPosts = [
 
 const HomePage = () => {
   const { user } = useUser();
+  const animationDuration = 30; // Define your desired animation duration in seconds
+  const animationDelay = 5; // Define your desired delay between posts in seconds
+  const [isAnimating, setIsAnimating] = useState(true);
+  const [elapsedTime, setElapsedTime] = useState(0);
 
-  // Constants for layout calculations
-  const postWidth = 100;
-  const postHeight = 100;
-  const sectionWidth = 800;
-  const sectionHeight = 600;
-  const minGap = 25;
-  const maxAttempts = 1000;
-  const animationDuration = 60; // Duration in seconds
+  useEffect(() => {
+    let timer;
+    if (isAnimating && elapsedTime < 20) {
+      timer = setTimeout(() => {
+        setElapsedTime(elapsedTime + 1);
+      }, 1000);
+    } else {
+      setIsAnimating(false);
+    }
+    return () => clearTimeout(timer);
+  }, [isAnimating, elapsedTime]);
 
-  // Function to generate non-overlapping offsets for posts
-  const generateOffsets = (postCount, sectionWidth, sectionHeight, postWidth, postHeight, minGap) => {
-    let offsets = [];
-    let attempts = 0;
-  
-    while (offsets.length < postCount && attempts < maxAttempts) {
-      let randomX = Math.floor(Math.random() * (sectionWidth - postWidth)-minGap) - minGap;
-      let randomY = Math.floor(Math.random() * (sectionHeight - postHeight)) + minGap;
-      let position = { x: randomX, y: randomY };
-  
-      let collision = offsets.some(offset => (
-        randomX < offset.x + postWidth + minGap &&
-        randomX + postWidth + minGap > offset.x &&
-        randomY < offset.y + postHeight + minGap &&
-        randomY + postHeight + minGap > offset.y
-      ));
-  
-      if (!collision) {
-        offsets.push(position);
-      } else {
-        attempts++;
-      }
-    }
-  
-    if (attempts >= maxAttempts) {
-      console.error('Could not place all posts without overlap after maximum attempts');
-    }
-  
-    return offsets;
+  const handleMouseDown = () => {
+    setIsAnimating(true);
+    setElapsedTime(0); // Reset the timer when the user holds down the button
   };
 
-  // Generate offsets for posts
-  const offsets = generateOffsets(dummyPosts.length, sectionWidth, sectionHeight, postWidth, postHeight, minGap);
-  
-  // Initialize posts state with xOffset and yOffset
-  const [posts] = useState(dummyPosts.map((post, index) => {
-    const offset = offsets[index];
-    // Check if the offset is defined for the current post
-    if (offset) {
-      return {
-        ...post,
-        xOffset: offset.x,
-        yOffset: offset.y
-      };
+  // Function to pause animation
+  const handleMouseUp = () => {
+    setIsAnimating(false);
+  };
+
+   // Function to determine vehicle type based on interactions
+  const getVehicleType = (interactions) => {
+    if (interactions < 10) {
+      return 'sedan';
+    } else if (interactions < 50) {
+      return 'suv';
     } else {
-      // Provide a fallback position or handle the error appropriately
-      console.error(`No offset found for post with id ${post.id}`);
-      return {
-        ...post,
-        xOffset: 0, // Fallback X position
-        yOffset: 0, // Fallback Y position
-      };
+      return 'bus';
     }
-  }));
+  };
+   // Function to assign a lane based on post id
+   const getLane = (postId) => {
+    return `lane-${((postId - 1) % 4) + 1}`; // This will cycle through lanes 1 to 4
+  };
+
+  // Function to calculate the delay for each post based on its index within its lane
+  const getAnimationDelay = (postId) => {
+    const laneNumber = (postId - 1) % 4;
+    const postsInLane = dummyPosts.filter(post => (post.id - 1) % 4 === laneNumber);
+    const indexInLane = postsInLane.findIndex(post => post.id === postId);
+    return indexInLane * animationDelay; // Delay based on index within the lane
+  };
 
   return (
     <div className="home-page">
-      <div className="profile-section">
-        <div className="profile-content">
-          <h1>{user?.firstName} {user?.lastName}</h1>
-          <p>{user?.email}</p>
-          <p>{user?.bio}</p>
+        <div className="profile-section">
+          <div className="profile-content">
+            <h1>{user?.firstName} {user?.lastName}</h1>
+            <p>{user?.email}</p>
+            <p>{user?.bio}</p>
+          </div>
         </div>
-      </div>
-      <div className="posts-section">
+        <div className="button-container">
+          <button onMouseDown={handleMouseDown} onMouseUp={handleMouseUp}>
+            Hold to Resume Posts
+          </button>
+        </div>
+        <div className="posts-section">
         <div className="postsContainer">
-          {posts.map(post => (
-            <div
-              key={post.id}
-              className="post"
-              style={{
-                '--interactions': post.interactions,
-                left: `${post.xOffset}px`,
-                top: `${post.yOffset}px`,
-                animationDuration: `${animationDuration}s`
-              }}
-            >
-              {post.title}
-            </div>
-          ))}
+          {dummyPosts.map(post => {
+            const vehicleType = getVehicleType(post.interactions);
+            const lane = getLane(post.id);
+            const delay = getAnimationDelay(post.id);
+            return (
+              <div
+                key={post.id}
+                className={`vehicle ${vehicleType} ${lane}`}
+                style={{
+                  animationDuration: `${animationDuration}s`,
+                  animationDelay: `${delay}s`,
+                  animationPlayState: isAnimating ? 'running' : 'paused',
+                }}
+              >
+                {post.title}
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
